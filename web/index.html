@@ -5,22 +5,57 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Sakura Ani Core</title>
   <style>
-    body{font-family:Inter,system-ui;background:#0f1221;color:#f4f4ff;max-width:900px;margin:32px auto;padding:0 16px}
-    .card{background:#171a2e;border:1px solid #2a2f52;border-radius:12px;padding:16px}
-    h1{margin-top:0}
-    .chip{display:inline-block;padding:4px 10px;border-radius:999px;background:#2a2f52;margin-right:8px}
+    body{font-family:Inter,system-ui;background:#0f1221;color:#f4f4ff;max-width:900px;margin:24px auto;padding:0 16px}
+    .card{background:#171a2e;border:1px solid #2a2f52;border-radius:12px;padding:16px;margin-bottom:12px}
+    input,select,button{padding:8px;border-radius:8px;border:1px solid #2a2f52;background:#10142a;color:#fff}
+    #log{white-space:pre-wrap;line-height:1.5}
   </style>
 </head>
 <body>
   <div class="card">
-    <h1>Sakura Ani Core 🌸🤖</h1>
-    <p>Starter shell for an anime-style assistant app.</p>
+    <h2>Sakura Ani Core 🌸🤖</h2>
     <div>
-      <span class="chip">Persona Layer</span>
-      <span class="chip">Memory</span>
-      <span class="chip">Tool Calling</span>
+      <label>Vibe</label>
+      <select id="vibe"><option>energetic</option><option>chill</option><option>mentor</option></select>
+      <label>Emoji</label>
+      <select id="emoji"><option>high</option><option>medium</option><option>low</option></select>
+      <label>Directness</label>
+      <select id="direct"><option>balanced</option><option>soft</option><option>blunt</option></select>
+      <button onclick="saveProfile()">Save Profile</button>
     </div>
-    <p style="margin-top:14px">Next: wire this UI to <code>/api/chat</code>.</p>
   </div>
+
+  <div class="card">
+    <input id="msg" style="width:70%" placeholder="Say something..." />
+    <button onclick="sendMsg()">Send</button>
+    <div id="log"></div>
+  </div>
+
+<script>
+let sessionId = null;
+const log = document.getElementById('log');
+function add(line){ log.textContent += line + "\n"; }
+
+async function saveProfile(){
+  const body = {
+    vibe: document.getElementById('vibe').value,
+    emoji_level: document.getElementById('emoji').value,
+    directness: document.getElementById('direct').value,
+  };
+  await fetch('/api/profile',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  add('Profile saved.');
+}
+
+async function sendMsg(){
+  const message = document.getElementById('msg').value.trim();
+  if(!message) return;
+  add('You: ' + message);
+  document.getElementById('msg').value = '';
+  const r = await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId,message})});
+  const j = await r.json();
+  sessionId = j.sessionId;
+  add('Ani: ' + j.reply);
+}
+</script>
 </body>
 </html>
