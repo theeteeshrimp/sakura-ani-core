@@ -2,21 +2,31 @@
 
 Experimental scaffold for building an anime-style AI assistant app (Grok Ani inspired).
 
+## Stack
+- **Backend:** Python + FastAPI
+- **Frontend:** static HTML prototype (`web/`)
+- **Storage:** local JSON (`data/db.json`)
+
+## Run
+```bash
+cd sakura-ani-core
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn backend.main:app --host 0.0.0.0 --port 8899 --reload
+```
+
+Open: `http://localhost:8899`
+
+## API
+- `GET /api/health`
+- `GET /api/profile`
+- `POST /api/profile`
+- `POST /api/chat`
+- `GET /api/session/{id}`
+
 ## Vision
 - Anime persona + expressive tone layer
 - Tool-using agent backend
 - Chat UI + memory + optional image features
 - Fast local iteration
-
-## Structure
-- `app/` backend notes + API contracts
-- `web/` frontend prototype (minimal)
-- `docs/` product/design docs
-- `skills/sakura-ani-dev/` OpenClaw skill for iterative build workflow
-
-## Next Steps
-1. Pick stack (FastAPI/Node + React/Svelte)
-2. Build `/chat` API + prompt/profile system
-3. Add memory storage + conversation history
-4. Add style controls (mood, intensity, emoji profile)
-5. Add optional image generation adapter
